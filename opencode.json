@@ -1,0 +1,110 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "ibm-ica": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "IBM ICA",
+      "options": {
+        "baseURL": "<YOUR_PROVIDER_BASE_URL>"
+      },
+      "models": {
+        "claude-opus-5": {
+          "name": "Claude Opus 5",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image", "pdf"],
+            "output": ["text"]
+          }
+        },
+        "claude-opus-4-8": {
+          "name": "Claude Opus 4.8",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image", "pdf"],
+            "output": ["text"]
+          }
+        },
+        "claude-opus-4-6": {
+          "name": "Claude Opus 4.6",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image", "pdf"],
+            "output": ["text"]
+          }
+        },
+        "claude-sonnet-5": {
+          "name": "Claude Sonnet 5",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image", "pdf"],
+            "output": ["text"]
+          }
+        },
+        "claude-sonnet-4-6": {
+          "name": "Claude Sonnet 4.6",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image", "pdf"],
+            "output": ["text"]
+          }
+        },
+        "claude-haiku-4-5": {
+          "name": "Claude Haiku 4.5 (free)",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image", "pdf"],
+            "output": ["text"]
+          }
+        },
+        "gpt-5.6-luna-dzus": {
+          "name": "OpenAI GPT-5.6 Luna (free)",
+          "attachment": false,
+          "modalities": {
+            "input": ["text"],
+            "output": ["text"]
+          }
+        },
+        "ibm/granite-4-h-small": {
+          "name": "Granite 4H Small (free)",
+          "attachment": false,
+          "modalities": {
+            "input": ["text"],
+            "output": ["text"]
+          }
+        },
+        "meta-llama/llama-4-maverick-17b-128e-instruct-fp8": {
+          "name": "Llama 4 Maverick 17B FP8 (free)",
+          "attachment": false,
+          "modalities": {
+            "input": ["text"],
+            "output": ["text"]
+          }
+        },
+        "gemma-4-26b-a4b-it": {
+          "name": "Gemma 4 26B Preview (free)",
+          "attachment": false,
+          "modalities": {
+            "input": ["text"],
+            "output": ["text"]
+          }
+        }
+      }
+    }
+  },
+  "model": "ibm-ica/claude-opus-4-8",
+  "small_model": "ibm-ica/claude-haiku-4-5",
+  "instructions": ["AGENTS.md"],
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "reserved": 10000
+  },
+  "agent": {
+    "explore": {
+      "model": "ibm-ica/claude-haiku-4-5"
+    },
+    "general": {
+      "model": "ibm-ica/claude-haiku-4-5"
+    }
+  }
+}
