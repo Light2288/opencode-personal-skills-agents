@@ -357,7 +357,7 @@ One commit per task. Each task in the Tasks section maps to exactly one commit.
 
 **Steps**:
 
-1. Open opencode.json and locate the `baseURL` field (line 8): currently `"https://api.servicesessentials.ibm.com/v1"`.
+1. Open opencode.json and locate the `baseURL` field (line 8): currently a real provider endpoint URL (redacted here — never commit the real endpoint).
 2. Replace the value with `"<YOUR_PROVIDER_BASE_URL>"`.
 3. Verify JSON is still valid.
 4. Add a note in the plan's Verification section that implementers must replace this placeholder with their actual endpoint before deployment.

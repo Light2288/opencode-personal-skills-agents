@@ -82,5 +82,13 @@ All changes remain usable in ~/.config/opencode after copy; no secrets committed
 
 ## Post-Implementation Amendments
 
-- **Provider baseURL**: The delivered repository config omits the provider `options`/`baseURL` block entirely rather than retaining a `<YOUR_PROVIDER_BASE_URL>` placeholder. This is the intended sanitized, secret-free state; deployment-specific endpoint configuration may be supplied outside this repository.
+- **Provider baseURL**: The repository config carries a
+  `provider.ibm-ica.options.baseURL` that references an external, untracked
+  file via opencode's `{file:...}` substitution
+  (`{file:~/.config/opencode/ibm-ica-baseurl}`). The real endpoint is never
+  committed — it lives only in that local file, which the user creates
+  outside version control. `install.sh` copies `opencode.json` verbatim and
+  prints a non-fatal warning if the file is missing on a fresh machine.
+  (`{env:...}` is not used: it is unreliable for the GUI-launched desktop app
+  and resolves to an empty string when unset.)
 - **Haiku routing**: The delivered `opencode.json` explicitly routes the valid built-in `title` and `summary` agents to `ibm-ica/claude-haiku-4-5`, alongside `explore` and `general`. `scout` routing is inapplicable because OpenCode 1.15.4 registers scout only behind an experimental runtime flag and this installation does not expose a scout agent.
