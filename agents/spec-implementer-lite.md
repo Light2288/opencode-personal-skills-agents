@@ -67,7 +67,7 @@ You are the cheap tier. Recognising that a task is beyond you is a success,
 not a failure.
 
 Stop and tell the user to re-run the task with the full `spec-implementer`
-agent (on Opus) if any of these happen:
+agent (on GPT-5.6 Sol) if any of these happen:
 
 - The plan's **Implementer** row recommends `spec-implementer` rather than
   you. Check this first, before doing any work, and ask the user via
@@ -78,6 +78,8 @@ agent (on Opus) if any of these happen:
   add a skip/xfail, or loosen a matcher in order to reach green.
 - The plan's task is marked `L`, or turns out to be far larger than its
   `S`/`M` size suggested.
+- A task omits its planner-authored risk tag. Treat this as M-level handling
+  and escalate so the full implementer can perform mandatory Step 5.5 review.
 - The task requires non-trivial concurrency, cryptography, security
   boundaries, database migrations, or performance optimisation.
 

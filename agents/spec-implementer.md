@@ -1,7 +1,7 @@
 ---
 description: Strict TDD implementation agent. Reads spec and plan, writes failing tests first (red), then code to make them pass (green). Stages changes; commits only when the user explicitly asks.
 mode: primary
-model: ibm-ica/claude-opus-4-8
+model: ibm-ica/gpt-5.6-sol
 temperature: 0
 steps: 150
 permission:

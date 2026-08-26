@@ -4,9 +4,6 @@
     "ibm-ica": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "IBM ICA",
-      "options": {
-        "baseURL": "<YOUR_PROVIDER_BASE_URL>"
-      },
       "models": {
         "claude-opus-5": {
           "name": "Claude Opus 5",
@@ -16,11 +13,11 @@
             "output": ["text"]
           }
         },
-        "claude-opus-4-8": {
-          "name": "Claude Opus 4.8",
-          "attachment": true,
+        "gpt-5.6-sol": {
+          "name": "OpenAI GPT-5.6 Sol",
+          "attachment": false,
           "modalities": {
-            "input": ["text", "image", "pdf"],
+            "input": ["text"],
             "output": ["text"]
           }
         },
@@ -91,7 +88,7 @@
       }
     }
   },
-  "model": "ibm-ica/claude-opus-4-8",
+  "model": "ibm-ica/gpt-5.6-sol",
   "small_model": "ibm-ica/claude-haiku-4-5",
   "instructions": ["AGENTS.md"],
   "compaction": {
