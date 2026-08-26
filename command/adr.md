@@ -1,4 +1,5 @@
 ---
+agent: build
 description: Design and record an architecture decision as a MADR
 ---
 

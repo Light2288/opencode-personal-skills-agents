@@ -79,3 +79,8 @@ All changes remain usable in ~/.config/opencode after copy; no secrets committed
   - Modified: `~/.config/opencode/opencode.json`, agent hard rules, skill workflows
 - **Implementation sequencing**: Changes to opencode.json and skills should be coordinated to avoid breaking the workflow mid-implementation. Recommend: fix agent hard rules first, then skills, then config, then AGENTS.md, then commands.
 - **Testing the fixes**: After implementation, spot-check: run /define on a toy spec, verify draft is written immediately; verify hard rule #3 text is gone; verify AGENTS.md is injected into all agent contexts; verify explore delegation works in spec-plan.
+
+## Post-Implementation Amendments
+
+- **Provider baseURL**: The delivered repository config omits the provider `options`/`baseURL` block entirely rather than retaining a `<YOUR_PROVIDER_BASE_URL>` placeholder. This is the intended sanitized, secret-free state; deployment-specific endpoint configuration may be supplied outside this repository.
+- **Haiku routing**: The delivered `opencode.json` explicitly routes the valid built-in `title` and `summary` agents to `ibm-ica/claude-haiku-4-5`, alongside `explore` and `general`. `scout` routing is inapplicable because OpenCode 1.15.4 registers scout only behind an experimental runtime flag and this installation does not expose a scout agent.
