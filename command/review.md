@@ -1,5 +1,5 @@
 ---
-agent: spec-implementer
+agent: build
 description: Review a diff against acceptance criteria
 ---
 

@@ -121,3 +121,7 @@ After Tier 2 is complete:
   - Pause spec-implement's Step 4b with a mysterious test failure; debug skill runs, names root cause, adds regression test, resumes.
   - Use `/review` command on a pasted code snippet; both review subagents run.
   - Use `/debug` command on a pasted error; debug skill runs without spec context.
+
+## Post-Implementation Amendments
+
+- **`/review` host agent**: `command/review.md` now routes to `build` rather than `spec-implementer`. The command is an ad-hoc advisory entry point with no spec implementation assumptions; the actual `review-spec` and `review-quality` subagents remain edit-denied, preserving read-only review behavior without using an edit-enabled spec host.

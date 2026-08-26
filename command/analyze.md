@@ -1,4 +1,5 @@
 ---
+agent: build
 description: Analyze a local document folder for requirements, contradictions, and gaps
 ---
 

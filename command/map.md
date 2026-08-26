@@ -1,4 +1,5 @@
 ---
+agent: build
 description: Create, validate, or refresh the repository architecture map
 ---
 
