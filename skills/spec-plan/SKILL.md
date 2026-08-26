@@ -30,6 +30,37 @@ for branch naming and the plan filename.
 
 ### Step 2 — Explore the Codebase
 
+Before delegated exploration, check for reusable architecture context.
+
+#### Architecture Map
+
+1. Look for `docs/architecture/map.md`.
+2. Parse its generation metadata, including `HEAD SHA` and `Key Paths`.
+3. Compare the stored SHA with `git rev-parse HEAD` when in a Git worktree and
+   verify every referenced key path exists.
+4. Treat a missing map, mismatched SHA, malformed metadata, or a missing referenced key path as stale.
+5. If current, read only map sections relevant to the spec scope and provide
+   that context to explore for validation and supplementation. Do not ask the
+   agent to repeat the complete architecture scan.
+6. If missing or stale, warn the user, suggest `/map force`, and continue with
+   normal exploration. Never regenerate the map automatically during planning.
+
+Record map freshness and whether map context was used in the plan's Context or
+Verification section.
+
+#### Architecture Decisions
+
+Search `docs/adr/*.md` by title, context, Decision Drivers, and the spec's
+scope. Accepted ADRs are authoritative constraints and must be linked in plan
+context and relevant task details. Proposed ADRs are non-binding context and
+must be labeled as such.
+
+If an unresolved architectural decision would materially change task
+decomposition or acceptance strategy, pause via `question` and offer to create
+an ADR first. If the user declines, record the recommendation and explicit
+planning assumption, then continue without fabricating a decision. Do not
+pause for choices that do not materially affect the plan.
+
 Delegate codebase exploration to the `explore` agent (a lighter model)
 rather than doing `glob`/`grep`/`read` in-context. This keeps the
 planner's context focused on planning and lets the exploration run once.
@@ -47,7 +78,10 @@ compact digest that grounds the plan in real files:
 
 Give the explore agent the spec so it knows what to look for, and ask for
 a structured summary (file inventory, patterns, testing framework, build
-commands, relevant code) rather than raw file dumps.
+commands, relevant code) rather than raw file dumps. Also provide relevant
+current-map sections and applicable ADRs, asking the agent to validate and
+supplement them. Ask it to identify material unresolved architecture choices
+and evidence for task risks in security, data, concurrency, or migrations.
 
 **Fallback:** if the `explore` agent is unavailable, fall back to
 in-context `glob`/`grep`/`read` and read-only `bash` (`ls`, `find`,
@@ -135,7 +169,7 @@ project has no build step.)
 
 ## Tasks
 
-### Task 1: <Task title> `[S/M/L | risk: <none/security/data/concurrency/migrations>]`
+### Task N: <title> `[S/M/L | risk: <category>]`
 
 **Goal**: <One sentence — what this task achieves.>
 
@@ -255,14 +289,21 @@ a failed cheap run plus escalation exceeds the saving.
 
 Every task header must contain one planner-authored risk value:
 
-- `none` when no listed sensitive domain applies;
-- `security`, `data`, `concurrency`, or `migrations` when that domain applies;
-- a comma-separated set only when multiple listed domains genuinely apply.
+- Permitted categories are exactly `none | security | data | concurrency | migrations | other`.
+- Use `none` when no listed sensitive domain applies.
+- Use `security`, `data`, `concurrency`, or `migrations` when that domain applies.
+- Use `other` for a material risk outside those named domains and explain the
+  concrete risk in the rationale.
+- Assign one category per task; split tasks when materially different risk
+  domains would otherwise be combined.
 
 Risk is independent from size: size estimates effort, while risk controls the
 implementation review gate. The planner assigns and explains risk from the
 approved spec and codebase evidence; it is never inferred by the implementer.
 Include all risk assignments in the Step 3 approval summary.
+The review summary must also state architecture-map freshness, applicable
+Accepted and Proposed ADRs, unresolved decisions and assumptions, and the
+rationale for every `other` risk.
 
 A legacy plan may omit the risk field. `spec-implement` warns about the
 missing risk and applies conservative M-level handling: the lite implementer
