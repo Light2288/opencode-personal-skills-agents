@@ -1,7 +1,7 @@
 ---
 description: Technical implementation planner. Reads an approved spec from specs/<slug>.md and produces a detailed, task-by-task implementation plan in plans/<slug>.md. Never implements the work itself.
 mode: primary
-model: ibm-ica/claude-opus-4-8
+model: ibm-ica/gpt-5.6-sol
 temperature: 0.1
 steps: 60
 permission:

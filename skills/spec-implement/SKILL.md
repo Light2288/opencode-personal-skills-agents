@@ -35,8 +35,13 @@ Extract from the plan:
 - **Branch name** (e.g. `feat/my-feature`).
 - **Build & Test Commands** (the table the planner produced).
 - **Tasks** with their steps, files, and tests.
+- Each task's **size and planner-authored risk tag**.
 - **Acceptance criteria mapping**.
 - **Edge cases**.
+
+If a legacy task has no risk tag, warn the user and apply conservative
+M-level handling. `spec-implementer-lite` must escalate; the full implementer
+continues with mandatory review. Never infer a missing risk from the code.
 
 ### Step 2 — Confirm Build & Test Commands and Explore
 
@@ -143,18 +148,27 @@ If the tests fail for the wrong reason (compilation error, wrong import,
 missing dependency unrelated to the new code), fix that first. Do not move
 on to 4b until the tests are genuinely red on the right assertion.
 
+A new test failing on its intended assertion is expected TDD red and must not
+invoke the `debug` skill.
+
 **4b. Implement the code (Green)**
 
 1. Write only the code needed to make the failing tests pass — no more.
 2. Do not modify test files during this phase except to correct genuine
    mistakes (wrong import path, typo in assertion value). Note any such
    corrections for the final report.
-3. After each meaningful step, run the test command again. Fix any
-   failures before moving on. If a test or build failure is mysterious,
-   read the output carefully — common causes: wrong import, missing
-   dependency declaration, environment variable not set, wrong working
-   directory.
-4. All tests for this task must pass before starting the next task.
+3. After each meaningful step, run the test command again. A failure is
+   unexpected when a previously-passing test regresses, the message is
+   genuinely unexplained rather than the new test's intended assertion, or
+   the same unexplained failure remains after one normal correction attempt.
+4. When any unexpected-failure indicator occurs, automatically invoke the
+   `debug` skill and block Step 4b. Do not continue until either the root cause
+   is named with evidence and a failing regression test is added, or the
+   bounded debug workflow escalates.
+5. After successful diagnosis, resume the minimal green implementation for
+   the same task. On escalation, return the evidence and wait for the user's
+   decision; do not guess, weaken tests, or silently continue.
+6. All tests for this task must pass before starting the next task.
 
 Repeat from 4a for each task in the plan.
 
@@ -163,6 +177,45 @@ Repeat from 4a for each task in the plan.
 Run the full test suite (and the full build, if the plan defines a build
 command) one final time. Both must exit with code 0. If either fails,
 diagnose and fix before proceeding. Do not weaken or skip tests.
+
+Do not declare verification or implementation success without recording for
+each test/build action:
+
+- the exact command;
+- exit code 0;
+- a substantiating proof line: a non-zero passing-test count or a concrete
+  build-artifact path.
+
+If a command cannot produce either proof form, run the approved manual checks
+and record a concrete non-zero scenario/check count with the decisive output.
+An exit code alone is not proof.
+
+### Step 5.5 — Run the Code-Review Gate
+
+Determine review policy only from each plan task's authored size and risk:
+
+- review is mandatory for every L-sized task;
+- review is mandatory for every M-sized task handled by the full implementer;
+- review is mandatory for any task tagged `security`, `data`, `concurrency`,
+  or `migrations`, regardless of size;
+- for an S-sized task tagged `risk: none`, use `question` to offer review; it
+  is optional, and a declined review must be recorded for the final summary;
+- if risk is missing, warn and apply the conservative handling from Step 1:
+  lite escalates and the full implementer performs mandatory review.
+
+Never infer risk. Any listed sensitive domain makes review mandatory.
+
+For each required or accepted review, invoke the `code-review` skill with the
+complete diff, spec criteria, and plan. It runs `review-spec` first and may run
+`review-quality` only after a fresh spec `PASS`.
+
+On `MISSING` or `EXTRA`, return the spec report and ask the user to choose
+whether to fix code, fix the plan, or override the review. Do not auto-fix.
+After any change, discard stale reports and rerun spec review before quality.
+
+Return quality findings to the implementer/user for a fix, appeal, or accept
+decision. Reviewers never edit. Do not proceed to staging until all mandatory
+review decisions and verification proof are complete.
 
 ### Step 6 — Stage Changes
 
@@ -191,7 +244,8 @@ ask you to commit. Call `question` with a concise summary that covers:
 - Tasks completed (from the plan).
 - Files created, modified, and deleted (the same paths you staged).
 - Tests added and their current status (all green).
-- Build/test commands used and their exit codes.
+- Build/test commands used, each exit code, and each substantiating proof line:
+  a non-zero passing-test count or a concrete build-artifact path.
 - Anything noteworthy — test corrections made, deviations from the plan,
   skipped git steps, etc.
 
@@ -253,8 +307,9 @@ Do not suggest next steps.
 - **Stay within the spec.** Implement only what the spec and plan describe.
 - **Stage with explicit paths.** Never `git add .` or `git add -A`.
 - **No commits unless asked.** The user owns commits.
-- **Fix the root cause.** If a test or build fails unexpectedly, investigate
-  — do not suppress or weaken tests.
+- **Fix the root cause.** An unexpected Step 4b failure invokes `debug` and
+  blocks implementation until evidence names the cause or the bounded process
+  escalates. Never suppress or weaken tests.
 - **Git is optional.** If no git repo is found, skip all git commands and
   note it in the report.
 - **Do not suggest next steps.**
