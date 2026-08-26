@@ -4,6 +4,9 @@
     "ibm-ica": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "IBM ICA",
+      "options": {
+        "baseURL": "{file:~/.config/opencode/ibm-ica-baseurl}"
+      },
       "models": {
         "claude-opus-5": {
           "name": "Claude Opus 5",
