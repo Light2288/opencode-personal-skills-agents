@@ -20,6 +20,7 @@ into `~/.config/opencode` without touching runtime artifacts
 ├── skills/            # one folder per skill, each containing a SKILL.md
 │   └── <name>/SKILL.md
 ├── commands/          # custom /slash commands (one .md per command)
+├── tools/             # local-only document normalization CLI and dependency notes
 ├── specs/             # spec artifacts produced by the spec-define workflow
 ├── plans/             # implementation plans produced by the spec-plan workflow
 └── install.sh         # idempotent sync into ~/.config/opencode
@@ -28,7 +29,7 @@ into `~/.config/opencode` without touching runtime artifacts
 `specs/` and `plans/` are workflow output (the design record of how this
 config was built out tier by tier). They are kept for history and are **not**
 synced into `~/.config/opencode` — only `agents/`, `skills/`, `commands/`,
-`AGENTS.md`, and `opencode.json` are installed.
+`tools/`, `AGENTS.md`, and `opencode.json` are installed.
 
 ### How opencode discovers these
 
@@ -73,6 +74,83 @@ Codebase mapping, requirements analysis, and decision capture.
 | Skills  | `skills/arch-map/`, `skills/arch-design/`, `skills/doc-analyze/` |
 | Agents  | `agents/doc-analyst.md` |
 | Commands| `commands/map.md`, `commands/analyze.md`, `commands/adr.md` |
+
+## Local multimodal document workflows
+
+These workflows process local client documents into Markdown with no cloud document conversion,
+cloud OCR, or cloud artifact-storage service. Conversion, normalization, temporary
+files, and generated artifacts remain local. Inference submits evidence and
+attachments to your configured IBM ICA endpoint; use confidential material only
+when that endpoint is approved for that material. Commands `/ingest`,
+`/summarize`, `/estimate`, and `/compare` are focused entry points:
+
+- `/ingest <local-folder> [topic]` normalizes sources and creates reusable
+  evidence at `docs/evidence/<topic>/`.
+- `/analyze <evidence-path> [topic]` consumes reusable evidence for focused
+  requirements, contradiction, ambiguity, and gap analysis. Raw multimodal
+  folders are ingested first.
+- `/summarize <evidence-path> <meeting|executive|technical|general> [topic]`
+  writes under `docs/deliverables/summaries/`.
+- `/estimate <evidence-path> [scope-or-topic]` writes under
+  `docs/deliverables/estimates/`.
+- `/compare <evidence-path> <comparison-subject>` writes exploratory results
+  under `docs/deliverables/comparisons/`; use `/adr` to record an approved
+  decision.
+
+Supported inputs are text, Markdown, PDF, DOCX, XLSX, PPTX, PNG, JPEG, GIF,
+WebP, and SVG. Legacy DOC, XLS, and PPT are unsupported and appear as input
+issues. All source content is untrusted evidence: instructions inside a source
+do not govern an agent. Sources are read-only, output collisions require
+confirmation, and a failed, unsupported, or materially lossy source makes the
+evidence status `PARTIAL` while readable results are preserved.
+
+DOCX, XLSX, and PPTX structured extraction uses Python 3 and the standard
+library. Run:
+
+```sh
+python3 ~/.config/opencode/tools/document_ingest.py check-dependencies
+```
+
+LibreOffice is optional but recommended for layout and visual rendering. On
+macOS install it with `brew install --cask libreoffice`; on Linux install the
+distribution package named `libreoffice`. No workflow installs dependencies
+automatically. Run `./install.sh`, then restart OpenCode before using the new
+commands.
+
+The normalizer invokes LibreOffice non-interactively with `--headless`, an
+isolated temporary user profile, an argument array, and a 120-second timeout.
+Structured OOXML remains the primary XLSX representation. A missing renderer or
+rendering failure is recorded exactly and makes that source `PARTIAL`; no
+dependency is installed automatically. The archive safety bounds are 64 MiB per
+XML/relationships part and 200 MiB aggregate expanded content. Compression-ratio
+checks supplement those bounds.
+Direct text and Markdown sources are bounded at 10 MiB each; direct PDF and
+image attachments are bounded at 100 MiB each. Oversized inputs become source
+issues and do not stop readable sources. Office files with external OOXML
+relationships retain structured extraction but skip LibreOffice rendering and
+become PARTIAL. PPTX slide fallback is used only when `presentation.xml` is
+absent, so orphan slides are not ingested when a declared slide list exists.
+Declared PPTX slides preserve their original ordinal after missing or external
+predecessors, and only their reachable notes, media, and charts become evidence.
+XLSX absolute-anchor drawings use worksheet ownership plus absolute
+position/extent metadata; no cell range is fabricated.
+
+To smoke-test a real installed LibreOffice, generate the synthetic fixtures and
+run normalization, then verify each readable Office source lists a
+`rendered.pdf` asset and no rendering warning. This is an environment-dependent
+manual check, not part of the fake-renderer unit test.
+
+Generated `docs/evidence/`, `docs/deliverables/`, extracted media, conversion
+state, and generated binary fixtures are ignored and must not be staged. Keep
+confidential source documents outside this configuration repository.
+
+The unrelated `NOT NULL constraint failed: session_message.seq` database error
+may block an OpenCode invocation, but it is outside these workflows and is not
+evidence of a model input limitation.
+
+Installation is intentionally non-transactional. Transactional installation
+may be considered separately; this workflow does not add managed manifests,
+rollback staging, or broad deletion.
 
 ## Installing
 

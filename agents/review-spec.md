@@ -1,7 +1,7 @@
 ---
 description: Read-only reviewer that checks a diff against every acceptance criterion and rejects missing or extra work.
 mode: subagent
-model: ibm-ica/claude-haiku-4-5
+model: ibm-ica/gpt-5.6-luna
 temperature: 0
 permission:
   read: allow

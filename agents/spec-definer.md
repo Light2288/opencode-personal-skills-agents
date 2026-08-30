@@ -1,7 +1,7 @@
 ---
 description: Conversational spec-definition agent. Captures requirements as a structured spec markdown file at specs/<slug>.md through dialogue. Never performs the work itself — only writes specs.
 mode: primary
-model: ibm-ica/claude-haiku-4-5
+model: ibm-ica/gpt-5.6-luna
 temperature: 0.2
 steps: 40
 permission:
