@@ -1,7 +1,7 @@
 ---
 description: Cheap-model TDD implementation agent for simple, low-risk specs. Identical workflow to spec-implementer but runs on a free model. Reads spec and plan, writes failing tests first (red), then code to make them pass (green). Stages changes; commits only when the user explicitly asks.
 mode: primary
-model: ibm-ica/claude-haiku-4-5
+model: ibm-ica/gpt-5.6-luna
 temperature: 0
 steps: 120
 permission:

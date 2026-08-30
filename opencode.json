@@ -18,9 +18,9 @@
         },
         "gpt-5.6-sol": {
           "name": "OpenAI GPT-5.6 Sol",
-          "attachment": false,
+          "attachment": true,
           "modalities": {
-            "input": ["text"],
+            "input": ["text", "image", "pdf"],
             "output": ["text"]
           }
         },
@@ -48,15 +48,7 @@
             "output": ["text"]
           }
         },
-        "claude-haiku-4-5": {
-          "name": "Claude Haiku 4.5 (free)",
-          "attachment": true,
-          "modalities": {
-            "input": ["text", "image", "pdf"],
-            "output": ["text"]
-          }
-        },
-        "gpt-5.6-luna-dzus": {
+        "gpt-5.6-luna": {
           "name": "OpenAI GPT-5.6 Luna (free)",
           "attachment": false,
           "modalities": {
@@ -92,7 +84,7 @@
     }
   },
   "model": "ibm-ica/gpt-5.6-sol",
-  "small_model": "ibm-ica/claude-haiku-4-5",
+  "small_model": "ibm-ica/gpt-5.6-luna",
   "instructions": ["AGENTS.md"],
   "compaction": {
     "auto": true,
@@ -101,16 +93,16 @@
   },
   "agent": {
     "explore": {
-      "model": "ibm-ica/claude-haiku-4-5"
+      "model": "ibm-ica/gpt-5.6-luna"
     },
     "general": {
-      "model": "ibm-ica/claude-haiku-4-5"
+      "model": "ibm-ica/gpt-5.6-luna"
     },
     "title": {
-      "model": "ibm-ica/claude-haiku-4-5"
+      "model": "ibm-ica/gpt-5.6-luna"
     },
     "summary": {
-      "model": "ibm-ica/claude-haiku-4-5"
+      "model": "ibm-ica/gpt-5.6-luna"
     }
   }
 }

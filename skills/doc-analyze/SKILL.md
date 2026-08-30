@@ -16,13 +16,29 @@ detection, not a prose-only summary.
 - Optional: ADR cross-reference mode.
 
 Ask for a missing folder. Verify it exists and is local before proceeding.
-Never use `webfetch` or an external API.
+Never use `webfetch` or web search. Inference uses the configured model provider.
 
 External-source acquisition is a separate workflow: use a suitably permitted
 primary agent or scout to fetch a source, save it locally, then provide that
 file to `doc-analyst`. If URL-to-analysis becomes a frequent need, ask the user
 before introducing a domain-allowlisted `webfetch`; never grant open webfetch
 to the analyst.
+
+## Relationship to `/ingest`
+
+`/ingest` owns multimodal normalization and reusable evidence. `/analyze`
+continues to own the requirements, contradiction, ambiguity, and gap report at
+`docs/analysis/<topic>.md`.
+
+When the input is an existing evidence set at `docs/evidence/<topic>/manifest.md`,
+read its `sources/S<n>/` content, preserve source IDs and coverage limitations,
+and do not reconvert it. When raw PDF, image, DOCX, XLSX, or PPTX input needs
+ingestion, the primary host must load and follow the `doc-ingest` skill directly,
+capture the resulting `docs/evidence/<topic>/` path, then continue this skill
+against that evidence set. Do not duplicate conversion or Office extraction.
+
+The original direct text/Markdown behavior below remains available for simple
+folders that do not need reusable multimodal normalization.
 
 ## Phase 1 — Discover Sources
 

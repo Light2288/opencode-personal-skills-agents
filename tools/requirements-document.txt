@@ -1,0 +1,2 @@
+# OOXML parsing uses the Python standard library.
+# LibreOffice is an optional system dependency for layout/PDF rendering.

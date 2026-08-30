@@ -14,8 +14,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEST="${HOME}/.config/opencode"
 
-# Directories synced 1:1 (with --delete so the target mirrors the repo).
-SYNC_DIRS=(agents skills commands)
+# Repository-owned files are updated without deleting unrelated local files.
+SYNC_DIRS=(agents skills commands tools)
 
 # Standalone files synced as-is (opencode.json is copied verbatim; its baseURL
 # is externalized via {file:...}, so no re-injection is needed).
@@ -43,20 +43,25 @@ echo "Syncing opencode config -> ${DEST}"
 
 # --- directories ------------------------------------------------------------
 # rsync reports each transferred path via --out-format; excludes keep runtime
-# and OS cruft out of the target. --delete makes the target mirror the repo,
-# but only within each synced directory (node_modules etc. live elsewhere).
+# and OS cruft out of the target.
 for dir in "${SYNC_DIRS[@]}"; do
   src="${SCRIPT_DIR}/${dir}/"
   dst="${DEST}/${dir}/"
   mkdir -p "$dst"
-  while IFS= read -r line; do
-    [ -z "$line" ] && continue
-    log_change "${dir}/: ${line}"
-  done < <(rsync -a --delete \
+  out="$(rsync -a \
     --exclude 'node_modules' \
     --exclude '.DS_Store' \
+    --exclude '.venv/' \
+    --exclude '__pycache__/' \
+    --exclude '*.pyc' \
+    --exclude '*.pyo' \
     --out-format='%o %n' \
-    "$src" "$dst" | grep -v '/$' || true)
+    "$src" "$dst")"
+  while IFS= read -r line; do
+    [ -z "$line" ] && continue
+    [[ "$line" == */ ]] && continue
+    log_change "${dir}/: ${line}"
+  done <<< "$out"
 done
 
 # --- standalone files -------------------------------------------------------

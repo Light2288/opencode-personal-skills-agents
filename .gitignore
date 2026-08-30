@@ -3,3 +3,8 @@ package.json
 package-lock.json
 bun.lock
 .DS_Store
+.venv/
+__pycache__/
+tests/fixtures/document_workflows/generated/
+docs/evidence/
+docs/deliverables/
