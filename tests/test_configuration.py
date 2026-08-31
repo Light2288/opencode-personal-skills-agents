@@ -97,6 +97,9 @@ class CommandRoutingMixin:
 
 class WorkflowRoutingTests(CommandRoutingMixin, unittest.TestCase):
 
+    def test_audit_routes_to_repository_audit(self):
+        self.assert_command_routes_to("audit", "repository-audit")
+
     def test_ingest_routes_to_doc_ingest(self):
         self.assert_command_routes_to("ingest", "doc-ingest")
 
@@ -156,11 +159,14 @@ class InstallationAndDocumentationTests(CommandRoutingMixin, unittest.TestCase):
             subprocess.run([str(source / "install.sh")], cwd=source, env=env, check=True, capture_output=True, text=True)
             destination = home / ".config/opencode"
             for relative in (
+                "agents/review-audit.md",
                 "agents/document-worker.md",
+                "commands/audit.md",
                 "commands/ingest.md",
                 "commands/summarize.md",
                 "commands/estimate.md",
                 "commands/compare.md",
+                "skills/repository-audit/SKILL.md",
                 "skills/doc-ingest/SKILL.md",
                 "skills/doc-summarize/SKILL.md",
                 "skills/doc-estimate/SKILL.md",

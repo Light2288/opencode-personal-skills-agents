@@ -61,9 +61,9 @@ Quality/spec gates between "tests pass" and "done", plus a structured debug loop
 
 | Kind    | Files |
 |---------|-------|
-| Skills  | `skills/code-review/`, `skills/debug/` |
-| Agents  | `agents/review-quality.md`, `agents/review-spec.md` |
-| Commands| `commands/review.md`, `commands/debug.md` |
+| Skills  | `skills/code-review/`, `skills/repository-audit/`, `skills/debug/` |
+| Agents  | `agents/review-quality.md`, `agents/review-spec.md`, `agents/review-audit.md` |
+| Commands| `commands/review.md`, `commands/audit.md`, `commands/debug.md` |
 
 #### Convergent review gate
 
@@ -93,6 +93,27 @@ one batch for the user's fix, selection, appeal, or risk decision. The workflow
 allows at most two remediation/follow-up rounds, then stops for one explicit
 user decision. Ad-hoc `/review` remains read-only, spec-first, and advisory and
 may display requested severities.
+
+#### Repository audit
+
+Use `/audit` for an open-ended health assessment of a clean or dirty worktree.
+It audits the whole repository by default, accepts an optional directory or
+concern, and examines pre-existing correctness, security, data integrity,
+error handling, maintainability, tests, configuration, and documentation.
+`/review` requires a diff and acceptance criteria and remains the strict,
+spec-first acceptance workflow for changed work.
+
+Audits are read-only and advisory. The host may run permitted non-destructive
+checks, reporting **Observed verification** separately from **Unobserved
+recommendations**. Defects are ordered Important, Minor, then Nitpick;
+optional improvements are separate. Each finding has a stable `AUDIT-*` ID,
+file and line evidence, impact, and a minimal remedy. A clean result is exactly
+`Findings: NONE`.
+
+The audit never fixes findings. The user must provide explicitly selected
+finding IDs before the workflow creates a handoff containing only those
+findings. Edit-capable work is a separate phase requiring a separate spec and
+plan.
 
 ### Tier 3 — Architecture layer
 
