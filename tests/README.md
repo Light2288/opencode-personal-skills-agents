@@ -8,6 +8,12 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 python3 tools/document_ingest.py check-dependencies
 ```
 
+`test_code_review_workflow.py` validates the Markdown contracts shared by the
+review skill, implementation skill, reviewer prompts, command, and README.
+Markdown contract tests catch missing or contradictory governance text; they
+do not prove runtime model behavior. Runtime claims still require observed
+command output or supplied concrete proof.
+
 Tests generate only synthetic Office, PDF, and image fixtures in temporary
 directories. They validate deterministic source IDs, structured extraction,
 source immutability, partial coverage, frontmatter, routing, model settings,

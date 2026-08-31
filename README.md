@@ -65,6 +65,35 @@ Quality/spec gates between "tests pass" and "done", plus a structured debug loop
 | Agents  | `agents/review-quality.md`, `agents/review-spec.md` |
 | Commands| `commands/review.md`, `commands/debug.md` |
 
+#### Convergent review gate
+
+Integrated implementation review remains read-only and spec-first:
+`review-spec` must return a fresh spec PASS for the same reviewed state before
+quality review can run.
+
+- **Initial review** checks every stable criterion ID, all extra scope, and the
+  complete feature diff. It retains full security and data-integrity coverage.
+- **Incremental review** follows remediation when unchanged spec/plan
+  fingerprints preserve the baseline. It reviews the remediation diff,
+  revalidates directly or transitively affected criteria, and summarizes
+  unaffected criteria by count. A stale, incomplete, or wrong-spec baseline
+  falls back to another initial review.
+- **Follow-up quality** verifies accepted Important finding IDs and checks the
+  remediation diff for Important regressions without reopening unchanged code.
+
+Every call carries a self-contained review envelope with governing paths,
+fingerprints, diff boundaries, changed files, stable criterion and finding IDs,
+prior dispositions, and observed verification proof. Reviewers reject invalid
+envelopes rather than guessing and never apply fixes.
+
+Only an unresolved Important finding blocks integrated staging. Minor findings
+are advisory; Nitpick findings are hidden by default and neither severity
+starts remediation automatically. Initial Important findings are presented in
+one batch for the user's fix, selection, appeal, or risk decision. The workflow
+allows at most two remediation/follow-up rounds, then stops for one explicit
+user decision. Ad-hoc `/review` remains read-only, spec-first, and advisory and
+may display requested severities.
+
 ### Tier 3 — Architecture layer
 
 Codebase mapping, requirements analysis, and decision capture.
