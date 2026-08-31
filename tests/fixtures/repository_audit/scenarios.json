@@ -1,0 +1,21 @@
+[
+  {"id": "clean-worktree", "document": "skill", "expected": ["Accept a clean or dirty Git worktree", "optional inputs, never prerequisites"]},
+  {"id": "dirty-worktree", "document": "skill", "expected": ["attribution context, never the audit boundary"]},
+  {"id": "directory-scope", "document": "skill", "expected": ["Validate a supplied directory", "report the limitation rather than silently broadening scope"]},
+  {"id": "concern-scope", "document": "skill", "expected": ["whole repository by default", "optional directory or concern"]},
+  {"id": "observed-pass", "document": "skill", "expected": ["Observed verification", "commands actually run and their observed result"]},
+  {"id": "observed-failure", "document": "skill", "expected": ["Observed verification", "including failures"]},
+  {"id": "unavailable-command", "document": "skill", "expected": ["unavailable or not permitted command is a coverage limitation", "not by itself a defect"]},
+  {"id": "unobserved-recommendation", "document": "skill", "expected": ["Unobserved recommendations", "must not be described as passing"]},
+  {"id": "severity-order", "document": "skill", "expected": ["severity order: Important, Minor, then Nitpick"]},
+  {"id": "no-findings", "document": "skill", "expected": ["report exactly", "Findings: NONE"]},
+  {"id": "selected-handoff", "document": "skill", "expected": ["only selected IDs", "separate spec and plan", "does not call an implementer"]},
+  {"id": "one-kickoff", "document": "rules", "expected": ["at most one kickoff update"]},
+  {"id": "repeat-conclusion", "document": "rules", "expected": ["Do not restate or paraphrase a conclusion already communicated"]},
+  {"id": "combined-discoveries", "document": "rules", "expected": ["Combine related discoveries into one update"]},
+  {"id": "material-evidence", "document": "rules", "expected": ["materially new evidence"]},
+  {"id": "blocker", "document": "rules", "expected": ["a blocker"]},
+  {"id": "changed-plan", "document": "rules", "expected": ["a changed plan"]},
+  {"id": "user-decision", "document": "rules", "expected": ["a user decision"]},
+  {"id": "final-deduplication", "document": "rules", "expected": ["Do not repeat progress conclusions in the final response"]}
+]
