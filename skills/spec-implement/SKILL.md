@@ -190,6 +190,10 @@ If a command cannot produce either proof form, run the approved manual checks
 and record a concrete non-zero scenario/check count with the decisive output.
 An exit code alone is not proof.
 
+Retain each exact command and proof line for the review envelope. If proof was
+not directly observed, record it as `unobserved`; do not describe it as
+passing.
+
 ### Step 5.5 — Run the Code-Review Gate
 
 Determine review policy only from each plan task's authored size and risk:
@@ -205,17 +209,87 @@ Determine review policy only from each plan task's authored size and risk:
 
 Never infer risk. Any listed sensitive domain makes review mandatory.
 
+Keep review state session-local. Do not persist it. Before every reviewer
+invocation construct a self-contained review envelope containing:
+
+- review mode and review ID;
+- governing spec path, exact spec slug, and governing plan path;
+- spec fingerprint and plan fingerprint;
+- diff base and current review fingerprint for the exact reviewed diff;
+- complete changed-file list for the requested mode;
+- stable acceptance criteria and affected criteria with impact reasons;
+- previous spec result when carrying criteria forward;
+- prior quality finding IDs and dispositions;
+- whether the call is integrated or ad hoc; and
+- observed verification commands and proof, using `unobserved` when absent.
+
+Calculate SHA-256 from the exact governing file bytes. Calculate the current
+review fingerprint from one canonical payload: `review-diff-v1\0`, the exact
+reviewed diff bytes, `\0files\0`, and the NUL-delimited sorted changed-file
+paths. Record `review-diff-v1` in the envelope. Capture the first accepted
+values as an immutable baseline. A remediation changes the current review
+fingerprint but not that baseline. If a required value is missing,
+internally inconsistent, stale, or wrong-spec, do not invoke a reviewer until
+the envelope is corrected or a full initial envelope is constructed. Do not
+reconstruct reviewer context from conversational memory.
+
+Before the first review, use the plan's descriptive criterion IDs. For legacy
+specs or plans without IDs, derive deterministic IDs from normalized criterion
+text with a collision suffix; keep the mapping session-local and do not rewrite
+legacy documents.
+
+The first review uses `Mode: initial`, every acceptance criterion, and the
+complete feature diff, including extra scope and unchanged security and
+data-integrity coverage. Store its PASS as the baseline spec result.
+
+After a remediation, identify affected criteria and impact reasons from direct
+changed behavior and transitive interface, permission boundary, data contract,
+error contract, and output contract changes, plus related MISSING or EXTRA
+findings. Use `Mode: incremental` only when the baseline spec review passed,
+the spec and plan fingerprints are unchanged, and the remediation diff is
+exact. If impact is uncertain, revalidate. Carry unaffected criteria forward
+by count and report `Carried forward: <count> unchanged criteria`. Always check
+`Extra work in remediation: NONE`. If validity cannot be proved, construct a
+full initial review envelope.
+
 For each required or accepted review, invoke the `code-review` skill with the
 complete diff, spec criteria, and plan. It runs `review-spec` first and may run
 `review-quality` only after a fresh spec `PASS`.
 
 On `MISSING` or `EXTRA`, return the spec report and ask the user to choose
 whether to fix code, fix the plan, or override the review. Do not auto-fix.
-After any change, discard stale reports and rerun spec review before quality.
+Remediation stales the current spec PASS but preserves the immutable baseline
+when its validation conditions still hold; rerun incremental spec review before
+quality. A spec or plan change invalidates both the current PASS and immutable
+baseline and forces a full initial review.
 
 Return quality findings to the implementer/user for a fix, appeal, or accept
-decision. Reviewers never edit. Do not proceed to staging until all mandatory
-review decisions and verification proof are complete.
+decision. Present all initial Important findings in one batch and ask once
+whether to fix all, select finding IDs, appeal findings, accept documented risk,
+or stop. Apply accepted fixes as one remediation batch where practical.
+Reviewers never edit.
+
+Track each stable finding ID, invariant/root cause, and disposition in the
+session. An equivalent finding must retain its existing finding ID and does
+not reset the remediation-round count. A genuinely new invariant receives a
+new ID; uncertainty must be reported rather than silently merging findings.
+
+After each accepted remediation and incremental spec PASS, run `Mode:
+follow-up` to verify accepted Important finding IDs and inspect only the
+remediation diff for Important regressions. Do not reopen unchanged code or
+introduce unrelated Minor or Nitpick findings. Only unresolved Important
+findings block staging; Minor and Nitpick findings are advisory, integrated
+Nitpicks are hidden by default, and neither advisory severity starts a cycle.
+
+The initial reviews do not count as remediation. Allow at most two remediation
+and follow-up rounds. Increment the session-local counter once per remediation
+plus targeted follow-up; recurring equivalent IDs do not reset it. After round
+two, stop automatic iteration and present all unresolved Important findings in
+one question: accept remaining risk, appeal specific IDs, revise the
+implementation, revise the spec or plan, or stop implementation.
+
+Do not proceed to staging until all mandatory review decisions and verification
+proof are complete.
 
 ### Step 6 — Stage Changes
 

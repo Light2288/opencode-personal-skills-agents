@@ -1,0 +1,21 @@
+[
+  {"id":"initial-full-review","inputs":{"baseline":null,"feature_diff":"complete"},"expected":"initial"},
+  {"id":"valid-remediation-baseline","inputs":{"baseline":"pass","fingerprints":"unchanged","diff":"exact"},"expected":"incremental"},
+  {"id":"stale-spec-fingerprint","inputs":{"spec_fingerprint":"changed"},"expected":"fallback-initial"},
+  {"id":"invalid-diff-base","inputs":{"diff_base":"invalid"},"expected":"fallback-initial"},
+  {"id":"transitive-impact","inputs":{"contract_changes":["interface","permission","data","error","output"]},"expected":"revalidate-mapped-criteria"},
+  {"id":"unaffected-criteria","inputs":{"direct":false,"transitive":false},"expected":"carry-forward-count"},
+  {"id":"uncertain-impact","inputs":{"impact":"uncertain"},"expected":"revalidate"},
+  {"id":"missing-envelope-field","inputs":{"review_id":null},"expected":"blocked"},
+  {"id":"wrong-spec-slug","inputs":{"path_slug_match":false},"expected":"blocked"},
+  {"id":"contradictory-mode","inputs":{"mode":"follow-up","reviewer":"spec"},"expected":"blocked"},
+  {"id":"shared-invariant-variants","inputs":{"variants":3,"root_causes":1},"expected":"one-finding-id"},
+  {"id":"initial-important-findings","inputs":{"important_ids":["QF-1","QF-2"]},"expected":"one-user-batch"},
+  {"id":"accepted-finding-follow-up","inputs":{"accepted_ids":["QF-1"],"scope":"remediation-diff"},"expected":"verify-ids-and-regressions"},
+  {"id":"unrelated-follow-up-minor","inputs":{"severity":"Minor","related":false},"expected":"exclude"},
+  {"id":"minor-only","inputs":{"severity":"Minor","integrated":true},"expected":"advisory"},
+  {"id":"integrated-nitpick","inputs":{"severity":"Nitpick","requested":false},"expected":"hidden"},
+  {"id":"equivalent-recurring-finding","inputs":{"invariant":"same","round":1},"expected":"retain-id-and-round"},
+  {"id":"first-remediation","inputs":{"round":1},"expected":"allow-targeted-follow-up"},
+  {"id":"second-remediation-unresolved","inputs":{"round":2,"important":"unresolved"},"expected":"stop-for-user-decision"}
+]
